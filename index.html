@@ -1,0 +1,139 @@
+<!DOCTYPE html><html lang="en"><head><meta http-equiv="Content-type" content="text/html; charset=utf-8"><meta name="theme-color" content="#3498db"><meta name="viewport" content="width=device-width,initial-scale=1"><title>slide</title><meta property="og:title" content="slide"><meta property="og:type" content="article"><link href="vendor.7.842d07cc6be21d732acf.css" rel="stylesheet"><link href="main.4.651d16beb30dfb5410c4.css" rel="stylesheet"></head><body><div id="root"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" class="btn-sidebar" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path></svg><article id="webslides"><section class="aligncenter"><h1>RecordとTupleが変えるJavaScriptのmutability</h1><h3>2019-12-20 @arayaryoma</h3><h3>at つくばexpress.js #1</h3></section><section class="aligncenter"><h2>自己紹介</h2><ul><li>あらや / Ryoma Abe</li><li><a href="https://twitter.com/arayaryoma">arayaryoma</a></li><li>元フラー社員, 元柏の葉在住</li><li>フロントエンドエンジニア</li><li>Web標準が好き</li></ul></section><section class="aligncenter"><h3>現職</h3><ul><li>株式会社ヘマタイト</li><li><a href="https://ctfkit.com">https://ctfkit.com</a><img src="d8f1f97a4cae0dc022917eb4f3780f6f.webp" alt="CTFKit"></li></ul></section><section class="aligncenter"><h2>JSのmutabilityおさらい</h2></section><section class="aligncenter"><p><code>const</code> で宣言された変数は再代入できない</p><pre><code class="language-javascript">// TypeError: Assignment to constant variable.
+
+const num = 0;
+num++;
+
+const str = &#x27;hello&#x27;;
+str = &#x27;bye&#x27;; 
+
+const isFree = false;
+isFree = true;
+
+const nullable = null;
+nullable = 100;
+
+const undef = undefined;
+undef = 500;
+
+const bigNum = 100000000000000000000000000n
+bigNum = 0;
+
+const sym = Symbol(&#x27;hello&#x27;);
+sym = Symbol(&#x27;&#x27;);
+
+const obj = {a: &#x27;hello&#x27;};
+obj = {a: &#x27;bye&#x27;};
+
+const arr = [1,2];
+arr = [3]
+</code></pre></section><section class="aligncenter"><p><code>object</code>と<code>Array</code>は<strong>再代入不可</strong>だが<strong>immutable</strong>ではない</p><pre><code class="language-javascript">const person = {
+    name: &#x27;Araya&#x27;,
+    age: 24
+}
+person.age++;
+console.log(person); // { name: &#x27;Araya&#x27;, age: 25 }
+
+const stations = [&#x27;柏の葉キャンパス&#x27;, &#x27;流山おおたかの森&#x27;];
+stations.push(&#x27;流山セントラルパーク&#x27;);
+stations.shift(); 
+console.log(stations); // [ &#x27;流山おおたかの森&#x27;, &#x27;流山セントラルパーク&#x27; ]
+</code></pre></section><section class="aligncenter"><p>元の値を変更しないものもある</p><pre><code class="language-js">const arr1 = [1,2,[3,4,5]];
+const flatten = arr1.flat();
+console.log(arr1); // [ 1, 2, [ 3, 4, 5 ] ]
+console.log(flatten); // [ 1, 2, 3, 4, 5 ] 
+</code></pre></section><section class="aligncenter"><h2>現代でのmutabilityとの戦い</h2></section><section class="aligncenter"><p><code>Object.freeze</code></p><pre><code class="language-js">const person = {
+    name: &#x27;Araya&#x27;,
+    age: 24
+}
+Object.freeze(person);
+person.age++;
+console.log(person); // { name: &#x27;Araya&#x27;, age: 24 }
+</code></pre><ul><li>エラーはthrowされない</li><li><strong>shallow freeze</strong>であることに注意</li></ul><pre><code class="language-js">const person = {
+    name: &#x27;Araya&#x27;,
+    age: 24,
+    company: {
+        name: &#x27;Hematite Inc.&#x27;,
+        place: &#x27;Tokyo&#x27;
+    }
+}
+Object.freeze(person);
+person.company.place = &#x27;Antarctica&#x27;;
+console.log(person.company.place) // Antarctica
+</code></pre></section><section class="aligncenter"><p>Spread syntax (スプレッド構文)</p><pre><code class="language-js">const person = {
+    name: &#x27;Araya&#x27;,
+    age: 24
+}
+const clone = {...person, age: person.age + 1}
+console.log(person); // { name: &#x27;Araya&#x27;, age: 24 }
+console.log(clone); // { name: &#x27;Araya&#x27;, age: 25 }
+
+const stations = [&#x27;柏の葉キャンパス&#x27;, &#x27;流山おおたかの森&#x27;];
+const added = [...stations, &#x27;流山セントラルパーク&#x27;]
+console.log(stations);  // [ &#x27;柏の葉キャンパス&#x27;, &#x27;流山おおたかの森&#x27; ]
+console.log(added) // [ &#x27;柏の葉キャンパス&#x27;, &#x27;流山おおたかの森&#x27;, &#x27;流山セントラルパーク&#x27; ]
+</code></pre><p>objectのプロパティなどを直接書き換えるのを禁止して、必ず新しい変数を作る。</p></section><section class="aligncenter"><p>Libraries</p><ul><li><a href="https://github.com/immutable-js/immutable-js">https://github.com/immutable-js/immutable-js</a></li><li><a href="https://github.com/kolodny/immutability-helper">https://github.com/kolodny/immutability-helper</a></li></ul></section><section class="aligncenter"><h2>ここまでのまとめ</h2><ul><li>JavaScriptのobjectはmutable</li><li><code>Object.deepFreeze</code> を別途実装したり、Immutable.js のライブラリが使われている</li><li>言語レベルでimmutableなobjectは求められている</li></ul></section><section class="aligncenter"><h2>Record &amp; Tuple</h2><p><a href="https://github.com/tc39/proposal-record-tuple">https://github.com/tc39/proposal-record-tuple</a></p></section><section class="aligncenter"><h3>Record &amp; Tuple</h3><ul><li>TC39に提出されているproposalの1つ。</li><li>2019年12月20日時点でStage1。</li><li>提案されたのは2019年4月頃</li><li>TC39に出されるproposalとしてはかなり順調(に見える)</li><li>残念ながら現在babel pluginなどはなさそう・・・</li></ul></section><section class="aligncenter"><h2>Record</h2><h3>基本のSyntax</h3><pre><code class="language-javascript">const record = #{
+    a: 1,
+    b: 2,
+    c: 3,
+};
+record.a === 1; // true
+record[&#x27;a&#x27;] === 1; //true
+
+record.a = 100 // TypeError
+</code></pre></section><section class="aligncenter"><h3>スプレッド構文</h3><pre><code class="language-javascript">const record2 = #{...record1, b: 5};
+record1 !== record2; //true
+record2 === #{ a: 1, c: 3, b: 5 }; // true
+</code></pre></section><section class="aligncenter"><h3>Iteration</h3><pre><code class="language-javascript">const record = #{ a: 1, b: 2 };
+
+// TypeError: record is not iterable
+for (const o of record) { console.log(o); }
+</code></pre><p>Recordはiterableではない</p></section><section class="aligncenter"><h3>objectからRecord型のオブジェクトを作る</h3><pre><code class="language-js">const obj = {a: 1, b: 2, c: 3};
+const record = Record.from(obj);
+Record.from({ a: {} }); // TypeError: Can&#x27;t convert Object with a non-const value to Record
+</code></pre></section><section class="aligncenter"><h2>Tuple</h2><h3>基本のSyntax</h3><pre><code class="language-javascript">const tuple = #[1, 2, 3];
+tuple[0] === 1; // true
+tuple[0] = 100; // TypeError
+</code></pre></section><section class="aligncenter"><h3><code>with</code></h3><pre><code class="language-javascript">const tuple1 = #[1, 2, 3];
+const tuple2 = tuple1.with(0, 2);
+tuple1 !== tuple2; // true
+tuple2 === #[2, 2, 3]; // true
+
+</code></pre></section><section class="aligncenter"><h3>スプレッド構文</h3><pre><code class="language-javascript">const tuple1 = #[1, 2, 3];
+const tuple2 = #[1, ...tuple1];
+tuple2 === #[1, 1, 2, 3]; // true
+</code></pre></section><section class="aligncenter"><h3><code>push</code>, <code>pop</code></h3><pre><code class="language-js">const tuple1 = #[1, 2, 3];
+
+const pushed = tuple1.push(4);
+pushed === #[1, 2, 3, 4]; // true
+
+const popped = tuple4.pop();
+popped === #[1, 2, 3]; // true
+</code></pre></section><section class="aligncenter"><h3>Iteration</h3><pre><code class="language-javascript">for (const o of tuple) { console.log(o); }
+// 1
+// 2
+</code></pre></section><section class="aligncenter"><h3>Array型のオブジェクトからTuple型のオブジェクトを作る</h3><pre><code class="language-js">const tuple = Tuple.from([1, 2, 3]);
+const tuple2 = Tuple.from([{}, {} , {}]); // // TypeError: Can&#x27;t convert Iterable with a non-const value to Tuple
+</code></pre></section><section class="aligncenter"><h2>気をつけること</h2><p><code>#{...}</code>はshallow freezeと同質</p><pre><code class="language-js">const person = #{
+    name: &#x27;Araya&#x27;,
+    age: 24,
+    company: { // この中はmutable
+        name: &#x27;Hematite Inc.&#x27;,
+        place: &#x27;Tokyo&#x27;
+    }
+}
+</code></pre><pre><code class="language-js">const imPerson = #{
+    name: &#x27;Araya&#x27;,
+    age: 24,
+    company: #{ // immutable
+        name: &#x27;Hematite Inc.&#x27;,
+        place: &#x27;Tokyo&#x27;
+    }
+}
+</code></pre><p>これについてはTupleも同様</p></section><section class="aligncenter"><h2><code>JSON.stringify</code></h2><ul><li><code>JSON.stringify(record)</code>は<code>JSON.stringify(object)</code>と同じ結果</li><li><code>JSON.stringify(tuple)</code>は<code>JSON.stringify(array)</code>と同じ結果</li></ul><pre><code class="language-js">JSON.stringify(#{ a: #[1, 2, 3] }); // &#x27;{&quot;a&quot;:[1,2,3]}&#x27;
+JSON.stringify(#[true, #{ a: #[1, 2, 3] }]); // &#x27;[true,{&quot;a&quot;:[1,2,3]}]&#x27;
+</code></pre></section><section class="aligncenter"><h2><code>typeof</code></h2><p>現在のところどちらも<code>record</code>になるのが妥当だと考えられている</p><pre><code class="language-js">typeof {a: 1} === &quot;object&quot;;
+typeof [1, 2] === &quot;object&quot;;
+
+typeof #{ a: 1 } === &quot;record&quot;;
+typeof #[1, 2]   === &quot;record&quot;;
+</code></pre></section><section class="aligncenter"><h2>まとめ</h2><ul><li>RecordとTupleはJSのランタイムにimmutableな世界をもたらす</li><li>すべてをimmutableにするのではなくて、<strong>mutable/immutableを明示的に書ける</strong>ことが重要</li><li>まだ使うことはできないが、期待値は高め(完全に発表者の主観。みなさんはどう思いますか？)</li><li>詳しくは<a href="https://github.com/tc39/proposal-record-tuple/commits/master">proposal</a>を見てください</li><li>TypeScriptのRecordとTupleは・・・RecordとTupleにコンパイルされる・・・？ (しかし中身はただのUtility type...)</li></ul></section></article></div><script type="text/javascript" src="runtime.003335d75cd98b823175.bundle.js"></script><script type="text/javascript" src="vendor.7.842d07cc6be21d732acf.bundle.js"></script><script type="text/javascript" src="main.4.651d16beb30dfb5410c4.bundle.js"></script></body></html>
