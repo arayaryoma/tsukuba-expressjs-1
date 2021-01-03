@@ -1,4 +1,27 @@
-<!DOCTYPE html><html lang="en"><head><meta http-equiv="Content-type" content="text/html; charset=utf-8"><meta name="theme-color" content="#3498db"><meta name="viewport" content="width=device-width,initial-scale=1"><title>slide</title><meta property="og:title" content="slide"><meta property="og:type" content="article"><link href="vendor.7.842d07cc6be21d732acf.css" rel="stylesheet"><link href="main.4.651d16beb30dfb5410c4.css" rel="stylesheet"></head><body><div id="root"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" class="btn-sidebar" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path></svg><article id="webslides"><section class="aligncenter"><h1>RecordとTupleが変えるJavaScriptのmutability</h1><h3>2019-12-20 @arayaryoma</h3><h3>at つくばexpress.js #1</h3></section><section class="aligncenter"><h2>自己紹介</h2><ul><li>あらや / Ryoma Abe</li><li><a href="https://twitter.com/arayaryoma">arayaryoma</a></li><li>元フラー社員, 元柏の葉在住</li><li>フロントエンドエンジニア</li><li>Web標準が好き</li></ul></section><section class="aligncenter"><h3>現職</h3><ul><li>株式会社ヘマタイト</li><li><a href="https://ctfkit.com">https://ctfkit.com</a><img src="d8f1f97a4cae0dc022917eb4f3780f6f.webp" alt="CTFKit"></li></ul></section><section class="aligncenter"><h2>JSのmutabilityおさらい</h2></section><section class="aligncenter"><p><code>const</code> で宣言された変数は再代入できない</p><pre><code class="language-javascript">// TypeError: Assignment to constant variable.
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <meta name="theme-color" content="#3498db" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    
+    
+      <title>
+        RecordとTupleが変えるJavaScriptのmutability
+      </title>
+      <meta property="og:title" content="RecordとTupleが変えるJavaScriptのmutability" />
+      <meta property="og:type" content="article" />
+    
+    
+    
+    
+    
+    
+  <link href="vendor.7.ad76cc64303ae2959157.css" rel="stylesheet"><link href="main.4.ac4805f791c2a89084d0.css" rel="stylesheet"></head>
+
+  <body>
+    <div id="root">
+      <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 24 24" class="btn-sidebar" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"></path></svg><article id="webslides"><section class="aligncenter"><h1>RecordとTupleが変えるJavaScriptのmutability</h1><h3>2019-12-20 @arayaryoma</h3><h3>at つくばexpress.js #1</h3></section><section class="aligncenter"><h2>自己紹介</h2><ul><li>あらや / Ryoma Abe</li><li><a href="https://twitter.com/arayaryoma">arayaryoma</a></li><li>元フラー社員, 元柏の葉在住</li><li>フロントエンドエンジニア</li><li>Web標準が好き</li></ul></section><section class="aligncenter"><h3>現職</h3><ul><li>株式会社ヘマタイト</li><li><a href="https://ctfkit.com">https://ctfkit.com</a><img src="d8f1f97a4cae0dc022917eb4f3780f6f.webp" alt="CTFKit"/></li></ul></section><section class="aligncenter"><h2>JSのmutabilityおさらい</h2></section><section class="aligncenter"><p><code>const</code> で宣言された変数は再代入できない</p><pre><code class="language-javascript">// TypeError: Assignment to constant variable.
 
 const num = 0;
 num++;
@@ -136,4 +159,8 @@ typeof [1, 2] === &quot;object&quot;;
 
 typeof #{ a: 1 } === &quot;record&quot;;
 typeof #[1, 2]   === &quot;record&quot;;
-</code></pre></section><section class="aligncenter"><h2>まとめ</h2><ul><li>RecordとTupleはJSのランタイムにimmutableな世界をもたらす</li><li>すべてをimmutableにするのではなくて、<strong>mutable/immutableを明示的に書ける</strong>ことが重要</li><li>まだ使うことはできないが、期待値は高め(完全に発表者の主観。みなさんはどう思いますか？)</li><li>詳しくは<a href="https://github.com/tc39/proposal-record-tuple/commits/master">proposal</a>を見てください</li><li>TypeScriptのRecordとTupleは・・・RecordとTupleにコンパイルされる・・・？ (しかし中身はただのUtility type...)</li></ul></section></article></div><script type="text/javascript" src="runtime.003335d75cd98b823175.bundle.js"></script><script type="text/javascript" src="vendor.7.842d07cc6be21d732acf.bundle.js"></script><script type="text/javascript" src="main.4.651d16beb30dfb5410c4.bundle.js"></script></body></html>
+</code></pre></section><section class="aligncenter"><h2>まとめ</h2><ul><li>RecordとTupleはJSのランタイムにimmutableな世界をもたらす</li><li>すべてをimmutableにするのではなくて、<strong>mutable/immutableを明示的に書ける</strong>ことが重要</li><li>まだ使うことはできないが、期待値は高め(完全に発表者の主観。みなさんはどう思いますか？)</li><li>詳しくは<a href="https://github.com/tc39/proposal-record-tuple/commits/master">proposal</a>を見てください</li><li>TypeScriptのRecordとTupleは・・・RecordとTupleにコンパイルされる・・・？
+(しかし中身はただのUtility type...)</li></ul></section></article>
+    </div>
+  <script type="text/javascript" src="runtime.0c9cd4cb770c42323984.bundle.js"></script><script type="text/javascript" src="vendor.7.ad76cc64303ae2959157.bundle.js"></script><script type="text/javascript" src="main.4.ac4805f791c2a89084d0.bundle.js"></script></body>
+</html>
